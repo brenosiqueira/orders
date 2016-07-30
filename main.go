@@ -7,12 +7,15 @@ import (
 	"log"
 )
 
+var session *gocql.Session
+
+
 func main() {
 	cluster := gocql.NewCluster("localhost")
 	cluster.Keyspace = "orders"
 	cluster.Consistency = gocql.One
 
-	session, _ := cluster.CreateSession()
+	session, _ = cluster.CreateSession()
 	defer session.Close()
 
 	setupWebServer(session);
@@ -23,6 +26,8 @@ func setupWebServer(session *gocql.Session) {
 	iris.Get("/scylla", func(ctx *iris.Context) {
 		scylla(ctx, session)
 	})
+
+	iris.API("/post", OrderAPI{})
 
 	iris.Listen(":8080")
 }
