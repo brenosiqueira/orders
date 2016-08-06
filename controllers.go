@@ -19,32 +19,22 @@ func (request OrderAPI) Post() {
 	//log.Print("Saving")
 	order.Save()
 	request.JSON(iris.StatusOK,  iris.Map{"id": order.Id})
-	//request.JSON(iris.StatusOK, order.Id)
 }
 
 func (request OrderItemAPI) Post() {
 	order := Order{}
 
 	err := order.Find(request.Param("id"))
+
 	if err != nil {
 		log.Print(err)
 		request.EmitError(iris.StatusNotFound)
 		return
 	}
 
-	item := OrderItem{}
-	request.ReadJSON(&item)
+	orderItem := OrderItem{}
+	request.ReadJSON(&orderItem)
 
-	log.Print(request.Params)
-
-
-	log.Print(order)
-
-	item.Save(order.Id)
+	orderItem.Save(order.Id)
 	request.Text(iris.StatusOK, "")
-	//order := Order.Find(request.Param("id"))
-	//order := Order{}.Find(request.Param("id"))
-	//order.find(request.Param("id"))
-
-
 }

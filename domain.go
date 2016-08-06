@@ -46,11 +46,6 @@ func (order *Order) Find(id string) error {
 }
 
 func (item *OrderItem) Save(order_id string) error {
-	//log.Print("Saving to disk")
-	//item.Id = uuid.NewV4().String()
-	item.Sku = uuid.NewV4().String()
-
-
 	err := session.Query("INSERT INTO \"order_item\" (sku,order_id,unit_price,quantity) VALUES (?,?,?,?)",
 		item.Sku, order_id, item.UnitPrice, item.Quantity).Exec()
 
