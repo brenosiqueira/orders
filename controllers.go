@@ -13,13 +13,13 @@ type OrderItemAPI struct {
 	*iris.Context
 }
 
-<<<<<<< HEAD
+
 type OrderDetailsAPI struct {
 	*iris.Context
-=======
+}
+
 type TransactionAPI struct {
 	 *iris.Context
->>>>>>> fdaa490f0b043cc7450de62a4e5d65f259c8daf2
 }
 
 func (request OrderAPI) Post() {
