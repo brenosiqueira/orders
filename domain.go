@@ -138,7 +138,7 @@ func (order *Order) Save() error {
 
 	err := order.ValidadeNewOrder()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		return err;
 	}
 
@@ -146,7 +146,7 @@ func (order *Order) Save() error {
 		order.Id, order.Number, order.Reference, order.Status, order.CreatedAt).Exec()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	return err
@@ -161,7 +161,7 @@ func (item *OrderItem) Save(order_id string) error {
 
 	err := item.ValidadeNewOrderItem()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		return err;
 	}
 
@@ -169,7 +169,7 @@ func (item *OrderItem) Save(order_id string) error {
 		item.Sku, item.UnitPrice, item.Quantity, order_id)).Exec()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	return err
@@ -182,7 +182,7 @@ func (order *Order) GetOrder(id string) error {
           &order.UpdatedAt, &order.Notes, &order.Price,&order.Items,&order.Transactions)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	return err
@@ -193,7 +193,7 @@ func (tran *Transaction) Save(order_id string) error {
 
 	err := tran.ValidateNewTransaction()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		return err;
 	}
 	query := fmt.Sprintf("UPDATE orders SET transactions = transactions + [{id: %v, external_id: '%v', amount: %v, type: '%v', authorization_code: '%v', card_brand: '%v', card_bin: '%v', card_last: '%v'}] WHERE id = %v",
@@ -202,7 +202,7 @@ func (tran *Transaction) Save(order_id string) error {
 	err = session.Query(query).Exec()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	return err

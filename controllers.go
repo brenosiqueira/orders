@@ -25,7 +25,7 @@ func (request OrderAPI) Post() {
 
 	if err != nil {
 		log.Print(err)
-		request.Text(iris.StatusBadRequest, err.Error())
+		request.JSON(iris.StatusBadRequest,iris.Map{"err":  err.Error()})
 		return
 	}
 
@@ -50,7 +50,7 @@ func (request OrderItemAPI) Post() {
 
 	if err != nil {
 		log.Print(err)
-		request.Text(iris.StatusBadRequest, err.Error())
+		request.JSON(iris.StatusBadRequest,iris.Map{"err":  err.Error()})
 		return
 	}
 	request.Text(iris.StatusOK, "")
@@ -89,7 +89,8 @@ func (request TransactionAPI) Post() {
 	err = transaction.Save(order.Id)
 
 	if err != nil {
-		request.Text(iris.StatusBadRequest,err.Error())
+		request.JSON(iris.StatusBadRequest,iris.Map{"err":  err.Error()})
 	}
+
 	request.JSON(iris.StatusOK, iris.Map{"id": transaction.Id})
 }
