@@ -30,7 +30,7 @@ def createOrderItemBody(quantity):
   return """ {
     "sku": "%s",
     "unit_price": 1000,
-    "quantity": %d,
+    "quantity": %d
     }""" % (sku, quantity)
 
 def getTimeInMillis():
@@ -92,12 +92,12 @@ class RedWeddingBehaviour(TaskSet):
       #adiciona um produto com somente uma unidade
       createOrderItem(self, self.orderID, 1, self.currentRun) #110.00 -> 50 + 50 + 10
       #em seguida abate 50 reais na conta 5000
-      payOrder(self, 5000, self.orderID) # 110 - 50 = 60
+      payOrder(self, self.orderID, 5000, self.currentRun) # 110 - 50 = 60
       #adiciona mais um item com 4 unidades do produto
       createOrderItem(self, self.orderID, 4, self.currentRun) #60 + 40 = 100
       time.sleep(getRandomTime())
       #efetua o pagamento total do saldo devedor da ordem
-      payOrder(self, 10000, self.orderID)
+      payOrder(self, self.orderID, 10000, self.currentRun)
     else:
       print "no orderID for createOrder"
 
@@ -111,4 +111,4 @@ class RedWeddingBehaviour(TaskSet):
 class LocustInit(HttpLocust):
   task_set = RedWeddingBehaviour
   host = "http://52.87.172.243:80"
-  #host = "http://sdlneuredelb-1416286239.us-east-1.elb.amazonaws.com:80"
+  #host = "http://sdlneuredelb-1416286239.us-east-1.elb.amazonaws.com:80" 
