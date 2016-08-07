@@ -6,6 +6,11 @@ import (
 	"log"
 )
 
+type Config struct {
+	Scyllaclusters []string
+	Serverport int
+}
+
 type Order struct {
 	Id        string      `json:"id"`
 	Number    string      `json:"number"`
