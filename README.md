@@ -8,7 +8,6 @@ Create order
 ```bash
 # POST http://localhos/orders
 curl -X POST -H "Content-Type: application/json" -d '{
-  "id": "123",
   "number": "12312",
   "reference": "ABC1",
   "notes": "Nota",
@@ -16,6 +15,12 @@ curl -X POST -H "Content-Type: application/json" -d '{
 }' "http://localhos/orders"
 
 ```
+```bash
+{
+  "id": "afc2d8e2-5a55-4afe-bbc8-555cb6853aac"
+}
+```
+
 
 Create order item
 
@@ -25,7 +30,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
     "sku": "b79f2752-5bfb-11e6-8b77-86f30ca893d3",
     "unit_price": 1000,
     "quantity": 2
-}' "http://localhost/orders/df144f65-34e8-4450-9324-a9e1f6d5178b/items"
+}' "http://localhost/orders/afc2d8e2-5a55-4afe-bbc8-555cb6853aac/items"
 
 ```
 
@@ -38,5 +43,11 @@ curl -X POST -H "Content-Type: application/json"  -d '{
     "card_brand": "VISA",
     "card_bin": "1402",
     "card_last": "3211"
-}' "http://localhost/orders/df144f65-34e8-4450-9324-a9e1f6d5178b/transactions"
+}' "http://localhost/orders/afc2d8e2-5a55-4afe-bbc8-555cb6853aac/transactions"
+```
+
+```bash
+{
+  "id": "efd0490d-e4de-4c41-afa2-7d8ab4604e75"
+}
 ```
