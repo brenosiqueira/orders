@@ -70,7 +70,6 @@ class RedWeddingBehaviour(TaskSet):
   def on_start(self):
     self.createOrder()
   
-  @task(1)
   def createOrder(self):
     self.currentRun = runCounter.next()
     #Cria a Ordem
