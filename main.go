@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
+	_ "github.com/dimiro1/banner/autoload"
 	"github.com/gocql/gocql"
 	"github.com/kataras/iris"
-	_ "github.com/dimiro1/banner/autoload"
 	"gopkg.in/yaml.v2"
-	"log"
 	"io/ioutil"
-	"fmt"
+	"log"
 )
 
 var session *gocql.Session
@@ -36,7 +36,7 @@ func main() {
 	session, _ = cluster.CreateSession()
 	defer session.Close()
 
-	setupWebServer(session);
+	setupWebServer(session)
 }
 
 func setupWebServer(session *gocql.Session) {
@@ -50,7 +50,7 @@ func setupWebServer(session *gocql.Session) {
 	iris.API("/orders/:id/items", OrderItemAPI{})
 	iris.API("/orders/:id/transactions", TransactionAPI{})
 
-	iris.Listen(fmt.Sprintf(":%v",config.Serverport))
+	iris.Listen(fmt.Sprintf(":%v", config.Serverport))
 }
 
 func scylla(ctx *iris.Context, session *gocql.Session) {
@@ -65,4 +65,3 @@ func scylla(ctx *iris.Context, session *gocql.Session) {
 func hello(ctx *iris.Context) {
 	ctx.Write("World!\n")
 }
-
