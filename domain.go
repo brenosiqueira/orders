@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 	"errors"
+	"github.com/gocql/gocql"
+	"strings"
 )
 
 type Config struct {
@@ -176,10 +178,8 @@ func (item *OrderItem) Save(order_id string) error {
 }
 
 func (order *Order) GetOrder(id string) error {
-
-	 err := session.Query("SELECT * from orders WHERE id = ? ", id).
-		 Scan(&order.Id, &order.Number, &order.Reference, &order.Status, &order.CreatedAt,
-          &order.UpdatedAt, &order.Notes, &order.Price,&order.Items,&order.Transactions)
+	err := session.Query("SELECT id, number, reference, status, notes, price from orders WHERE id = ? ", id).
+		 Scan(&order.Id, &order.Number, &order.Reference, &order.Status, &order.Notes, &order.Price)
 
 	if err != nil {
 		log.Print(err)
@@ -206,4 +206,13 @@ func (tran *Transaction) Save(order_id string) error {
 	}
 
 	return err
+}
+
+func (order *OrderItem) UnmarshalCQL(info gocql.TypeInfo, data []byte) error {
+
+	t := strings.SplitN(string(data), " ", 2)
+
+	log.Print(t)
+	return nil
+
 }

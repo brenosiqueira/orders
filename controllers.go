@@ -61,7 +61,6 @@ func (request OrderAPI) Get() {
 
 	err := order.GetOrder(request.Param("id"))
 
-
 	if err != nil {
 		log.Print(err)
 		request.EmitError(iris.StatusNotFound)

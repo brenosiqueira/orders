@@ -27,6 +27,7 @@ func main() {
 
 	cluster := gocql.NewCluster(config.Scyllaclusters...)
 	cluster.Keyspace = "orders"
+	cluster.ProtoVersion = 3
 	cluster.Consistency = gocql.One
 
 	session, _ = cluster.CreateSession()
