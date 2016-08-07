@@ -20,7 +20,15 @@ type TransactionAPI struct {
 func (request OrderAPI) Post() {
 	order := Order{}
 	request.ReadJSON(&order)
-	order.Save()
+
+	err := order.Save()
+
+	if err != nil {
+		log.Print(err)
+		request.Text(iris.StatusBadRequest, err.Error())
+		return
+	}
+
 	request.JSON(iris.StatusOK, iris.Map{"id": order.Id})
 }
 
@@ -38,7 +46,13 @@ func (request OrderItemAPI) Post() {
 	orderItem := OrderItem{}
 	request.ReadJSON(&orderItem)
 
-	orderItem.Save(order.Id)
+	err = orderItem.Save(order.Id)
+
+	if err != nil {
+		log.Print(err)
+		request.Text(iris.StatusBadRequest, err.Error())
+		return
+	}
 	request.Text(iris.StatusOK, "")
 }
 
@@ -72,6 +86,10 @@ func (request TransactionAPI) Post() {
 	transaction := Transaction{}
 	request.ReadJSON(&transaction)
 
-	transaction.Save(order.Id)
+	err = transaction.Save(order.Id)
+
+	if err != nil {
+		request.Text(iris.StatusBadRequest,err.Error())
+	}
 	request.JSON(iris.StatusOK, iris.Map{"id": transaction.Id})
 }
