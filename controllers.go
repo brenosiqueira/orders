@@ -13,10 +13,6 @@ type OrderItemAPI struct {
 	*iris.Context
 }
 
-type OrderDetailsAPI struct {
-	*iris.Context
-}
-
 type TransactionAPI struct {
 	*iris.Context
 }
@@ -24,7 +20,6 @@ type TransactionAPI struct {
 func (request OrderAPI) Post() {
 	order := Order{}
 	request.ReadJSON(&order)
-	//log.Print("Saving")
 	order.Save()
 	request.JSON(iris.StatusOK, iris.Map{"id": order.Id})
 }
@@ -47,10 +42,11 @@ func (request OrderItemAPI) Post() {
 	request.Text(iris.StatusOK, "")
 }
 
-func (request OrderDetailsAPI) Get() {
-	orderDetails := OrderDetails{}
+func (request OrderAPI) Get() {
+	order := Order{}
 
-	err := orderDetails.GetOrder(request.Param("id"))
+	err := order.GetOrder(request.Param("id"))
+
 
 	if err != nil {
 		log.Print(err)
@@ -58,8 +54,8 @@ func (request OrderDetailsAPI) Get() {
 		return
 	}
 
-	request.ReadJSON(&orderDetails)
-	request.Text(iris.StatusOK, "")
+	request.ReadJSON(&order)
+	request.JSON(iris.StatusOK, order)
 }
 
 func (request TransactionAPI) Post() {

@@ -80,26 +80,6 @@ func (oi OrderItem) ValidadeNewOrderItem() error {
 	return nil;
 }
 
-type OrderDetails struct {
-	Id                string    `json:"id"`
-	Number            string    `json:"number"`
-	Reference         string    `json:"reference"`
-	Status            string    `json:"status"`
-	CreatedAt         time.Time `json:"createdAt"`
-	UpdatedAt         time.Time `json:"updatedAt"`
-	Notes             string    `json:"notes"`
-	Price             int       `json:"price"`
-	Sku               string    `json:"sku"`
-	UnitPrice         int       `json:"unit_price"`
-	Quantity          int       `jsogn:"quantity"`
-	ExternalId        string    `json:"externalId"`
-	Amount            int       `json:"amount"`
-	Type              string    `json:"type"`
-	AuthorizationCode string    `json:"authorizationCode"`
-	CardBrand         string    `json:"cardBrand"`
-	CardBin           string    `json:"cardBin"`
-	CardLast          string    `json:"cardLast"`
-}
 
 type Transaction struct {
 	Id                string `json:"id"`
@@ -195,13 +175,11 @@ func (item *OrderItem) Save(order_id string) error {
 	return err
 }
 
-func (orderDetails *OrderDetails) GetOrder(id string) error {
+func (order *Order) GetOrder(id string) error {
 
-	err := session.Query("SELECT * from orders WHERE id = ? ", id).
-		Scan(&orderDetails.Id, &orderDetails.Number, &orderDetails.Reference, &orderDetails.Status, &orderDetails.CreatedAt,
-			&orderDetails.UpdatedAt, &orderDetails.Notes, &orderDetails.Sku, &orderDetails.UnitPrice, &orderDetails.Quantity,
-			&orderDetails.ExternalId, &orderDetails.Type, &orderDetails.Amount, &orderDetails.AuthorizationCode, &orderDetails.CardBrand,
-			&orderDetails.CardBin, &orderDetails.CardLast)
+	 err := session.Query("SELECT * from orders WHERE id = ? ", id).
+		 Scan(&order.Id, &order.Number, &order.Reference, &order.Status, &order.CreatedAt,
+          &order.UpdatedAt, &order.Notes, &order.Price,&order.Items,&order.Transactions)
 
 	if err != nil {
 		log.Fatal(err)

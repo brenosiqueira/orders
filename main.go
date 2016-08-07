@@ -20,14 +20,10 @@ func main() {
 		panic(err)
 	}
 
-	log.Print(config)
-
 	err = yaml.Unmarshal(configFile, &config)
 	if err != nil {
 		panic(err)
 	}
-
-	log.Print(config)
 
 	cluster := gocql.NewCluster(config.Scyllaclusters...)
 	cluster.Keyspace = "orders"
@@ -46,7 +42,7 @@ func setupWebServer(session *gocql.Session) {
 	})
 
 	iris.API("/orders", OrderAPI{})
-	iris.API("/orders/:id", OrderDetailsAPI{})
+	iris.API("/orders/:id", OrderAPI{})
 	iris.API("/orders/:id/items", OrderItemAPI{})
 	iris.API("/orders/:id/transactions", TransactionAPI{})
 
