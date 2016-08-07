@@ -11,7 +11,7 @@ var session *gocql.Session
 
 
 func main() {
-	cluster := gocql.NewCluster("localhost") //172.31.1.39
+	cluster := gocql.NewCluster("localhost")  //"172.31.8.255", "172.31.0.159") //172.31.1.39
 	cluster.Keyspace = "orders"
 	cluster.Consistency = gocql.One
 
@@ -27,10 +27,9 @@ func setupWebServer(session *gocql.Session) {
 		scylla(ctx, session)
 	})
 
-	iris.API("/post", OrderAPI{})
-
 	iris.API("/orders", OrderAPI{})
 	iris.API("/orders/:id/items", OrderItemAPI{})
+	iris.API("/orders/:id/transactions", TransactionAPI{})
 
 	iris.Listen(":8080")
 }

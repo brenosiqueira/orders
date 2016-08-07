@@ -13,6 +13,10 @@ type OrderItemAPI struct {
 	*iris.Context
 }
 
+type TransactionAPI struct {
+	 *iris.Context
+}
+
 func (request OrderAPI) Post() {
 	order := Order{}
 	request.ReadJSON(&order)
@@ -37,4 +41,22 @@ func (request OrderItemAPI) Post() {
 
 	orderItem.Save(order.Id)
 	request.Text(iris.StatusOK, "")
+}
+
+func (request TransactionAPI) Post() {
+	order := Order{}
+
+	err := order.FindId(request.Param("id"))
+
+	if err != nil {
+		log.Print(err)
+		request.EmitError(iris.StatusNotFound)
+		return
+	}
+
+	transaction := Transaction{}
+	request.ReadJSON(&transaction)
+
+	transaction.Save(order.Id)
+	request.JSON(iris.StatusOK,  iris.Map{"id": transaction.Id})
 }
