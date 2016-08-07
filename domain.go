@@ -80,7 +80,7 @@ func (order *Order) GetOrder(id string) error {
 
 	 err := session.Query("SELECT * from orders WHERE id = ? ", id).
 		 Scan(&order.Id, &order.Number, &order.Reference, &order.Status, &order.CreatedAt,
-          &order.UpdatedAt, &order.Notes, &order.Price,&Items,&order.Transaction)
+          &order.UpdatedAt, &order.Notes, &order.Price,&order.Items,&order.Transactions)
 
 	if err != nil {
         	log.Fatal(err)

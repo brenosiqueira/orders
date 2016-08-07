@@ -20,7 +20,6 @@ type TransactionAPI struct {
 func (request OrderAPI) Post() {
 	order := Order{}
 	request.ReadJSON(&order)
-	//log.Print("Saving")
 	order.Save()
 	request.JSON(iris.StatusOK,  iris.Map{"id": order.Id})
 }
@@ -47,6 +46,8 @@ func (request OrderAPI) Get() {
 	order := Order{}
 
 	err := order.GetOrder(request.Param("id"))
+
+
 
 	if err != nil {
 		log.Print(err)
