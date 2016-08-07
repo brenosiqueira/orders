@@ -46,6 +46,7 @@ func setupWebServer(session *gocql.Session) {
 	})
 
 	iris.API("/orders", OrderAPI{})
+	iris.API("/orders/:id", OrderDetailsAPI{})
 	iris.API("/orders/:id/items", OrderItemAPI{})
 	iris.API("/orders/:id/transactions", TransactionAPI{})
 

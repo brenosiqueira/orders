@@ -50,7 +50,9 @@ func (request OrderItemAPI) Post() {
 
 func (request OrderDetailsAPI) Get() {
 	orderDetails := OrderDetails{}
+
 	err := orderDetails.GetOrder(request.Param("id"))
+
 
 	if err != nil {
 		log.Print(err)

@@ -96,24 +96,23 @@ func (item *OrderItem) Save(order_id string) error {
 
 func (orderDetails *OrderDetails) GetOrder(id string) error {
 
-	 err := session.QueryRow("SELECT \"order\".id,\"order\".number, \"order\".reference, \"order\".status, \"order\".created_at,
- 	  											\"order\".updated_at, \"order\".notes, \"order_item\".sku, \"order_item\".unit_price, \"order_item\".quantity,
-													\"transaction\".external_id, \"transaction\".type, \"transaction\".amount,
- 													\"transaction\".authorization_code, \"transaction\".card_brand, \"transaction\".card_bin, \"transaction\".card_last
- 													FROM \"order\"
- 													RIGHT JOIN \"order_item\" on \"order\".id = \"order_item\".order_id
- 													RIGHT JOIN \"transaction\" \"order\".id = \"transaction\".order_id WHERE id = ? ", id)
-	  						.Scan(&orderDetails.Id, &orderDetails.number, &orderDetails.Reference, &orderDetails.Status, &orderDetails.CreatedAt,
+	 err := session.Query("SELECT \"order\".id,\"order\".number, \"order\".reference, \"order\".status, \"order\".created_at," +
+ 	  											"\"order\".updated_at, \"order\".notes, \"order_item\".sku, \"order_item\".unit_price, \"order_item\".quantity," +
+													"\"transaction\".external_id, \"transaction\".type, \"transaction\".amount,"+
+ 													"\"transaction\".authorization_code, \"transaction\".card_brand, \"transaction\".card_bin, \"transaction\".card_last"+
+ 													" FROM \"order\" "+
+ 													" RIGHT JOIN \"order_item\" on \"order\".id = \"order_item\".order_id" +
+ 													" RIGHT JOIN \"transaction\" \"order\".id = \"transaction\".order_id WHERE id = ? ", id).
+		 Scan(&orderDetails.Id, &orderDetails.Number, &orderDetails.Reference, &orderDetails.Status, &orderDetails.CreatedAt,
 											&orderDetails.UpdatedAt, &orderDetails.Notes, &orderDetails.Sku, &orderDetails.UnitPrice, &orderDetails.Quantity,
 										  &orderDetails.ExternalId, &orderDetails.Type, &orderDetails.Amount, &orderDetails.AuthorizationCode, &orderDetails.CardBrand,
 	  									&orderDetails.CardBin, &orderDetails.CardLast)
 
-		if err != nil {
-        return &OrderDetails{}, err
-    } else {
-        return &orderDetails, nil
-    }
+	if err != nil {
+        	log.Fatal(err)
+    	}
 
+	return err
 }
 
 func (tran *Transaction) Save(order_id string) error {
