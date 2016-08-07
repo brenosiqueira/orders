@@ -24,7 +24,7 @@ func (request OrderAPI) Post() {
 func (request OrderItemAPI) Post() {
 	order := Order{}
 
-	err := order.Find(request.Param("id"))
+	err := order.FindId(request.Param("id"))
 
 	if err != nil {
 		log.Print(err)

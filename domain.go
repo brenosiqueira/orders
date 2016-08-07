@@ -41,7 +41,7 @@ func (order *Order) Save() error {
 	return err
 }
 
-func (order *Order) Find(id string) error {
+func (order *Order) FindId(id string) error {
 	return session.Query("SELECT id FROM \"order\" WHERE id = ? ", id).Scan(&order.Id)
 }
 
