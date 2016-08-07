@@ -1,4 +1,5 @@
 scyllaclusters:
-  - 172.31.0.159
-  - 172.31.8.255
-serverport: 80
+#  - 54.210.133.142
+#  - 54.198.65.209
+  - localhost
+serverport: 8080

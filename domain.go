@@ -4,6 +4,7 @@ import (
 	"github.com/satori/go.uuid"
 	"time"
 	"log"
+	"fmt"
 )
 
 type Config struct {
@@ -20,13 +21,14 @@ type Order struct {
 	UpdatedAt time.Time   `json:"updatedAt"`
 	Notes     string      `json:"notes"`
 	Price     int         `json:"price"`
+	Items     []OrderItem         `json:"items"`
+	Transactions     []Transaction  `json:"transactions"`
 }
 
 type OrderItem struct {
 	Sku       string `json:"sku"`
 	UnitPrice    int    `json:"unit_price"`
 	Quantity int    `json:"quantity"`
-	OrderId    string `json:"order_id"`
 }
 
 type OrderDetails struct {
@@ -63,12 +65,11 @@ type Transaction struct {
 }
 
 func (order *Order) Save() error {
-	//log.Print("Saving to disk")
 	order.Id = uuid.NewV4().String()
 	order.Status = "DRAFT"
 	order.CreatedAt = time.Now()
 
-	err := session.Query("INSERT INTO \"order\" (id,number,reference,status,created_at) VALUES (?,?,?,?,?)",
+	err := session.Query("INSERT INTO orders (id,number,reference,status,created_at) VALUES (?,?,?,?,?)",
 		order.Id, order.Number, order.Reference, order.Status, order.CreatedAt).Exec()
 
 	if (err != nil) {
@@ -79,12 +80,13 @@ func (order *Order) Save() error {
 }
 
 func (order *Order) FindId(id string) error {
-	return session.Query("SELECT id FROM \"order\" WHERE id = ? ", id).Scan(&order.Id)
+	return session.Query("SELECT id FROM orders WHERE id = ? ", id).Scan(&order.Id)
 }
 
 func (item *OrderItem) Save(order_id string) error {
-	err := session.Query("INSERT INTO \"order_item\" (sku,order_id,unit_price,quantity) VALUES (?,?,?,?)",
-		item.Sku, order_id, item.UnitPrice, item.Quantity).Exec()
+
+	err := session.Query(fmt.Sprintf("UPDATE orders SET items = items + [{sku: %v, unit_price: %v, quantity: %v}] WHERE id = %v",
+		item.Sku, item.UnitPrice, item.Quantity, order_id)).Exec()
 
 	if (err != nil) {
 		log.Fatal(err)
@@ -96,13 +98,7 @@ func (item *OrderItem) Save(order_id string) error {
 
 func (orderDetails *OrderDetails) GetOrder(id string) error {
 
-	 err := session.Query("SELECT \"order\".id,\"order\".number, \"order\".reference, \"order\".status, \"order\".created_at," +
- 	  											"\"order\".updated_at, \"order\".notes, \"order_item\".sku, \"order_item\".unit_price, \"order_item\".quantity," +
-													"\"transaction\".external_id, \"transaction\".type, \"transaction\".amount,"+
- 													"\"transaction\".authorization_code, \"transaction\".card_brand, \"transaction\".card_bin, \"transaction\".card_last"+
- 													" FROM \"order\" "+
- 													" RIGHT JOIN \"order_item\" on \"order\".id = \"order_item\".order_id" +
- 													" RIGHT JOIN \"transaction\" \"order\".id = \"transaction\".order_id WHERE id = ? ", id).
+	 err := session.Query("SELECT * from orders WHERE id = ? ", id).
 		 Scan(&orderDetails.Id, &orderDetails.Number, &orderDetails.Reference, &orderDetails.Status, &orderDetails.CreatedAt,
 											&orderDetails.UpdatedAt, &orderDetails.Notes, &orderDetails.Sku, &orderDetails.UnitPrice, &orderDetails.Quantity,
 										  &orderDetails.ExternalId, &orderDetails.Type, &orderDetails.Amount, &orderDetails.AuthorizationCode, &orderDetails.CardBrand,
@@ -118,8 +114,10 @@ func (orderDetails *OrderDetails) GetOrder(id string) error {
 func (tran *Transaction) Save(order_id string) error {
 	tran.Id = uuid.NewV4().String()
 
-	err := session.Query("INSERT INTO \"transaction\" (id,order_id,external_id,amount,type,authorization_code,card_brand,card_bin,card_last) VALUES (?,?,?,?,?,?,?,?,?)",
-		tran.Id, order_id, tran.ExternalId, tran.Amount, tran.Type, tran.AuthorizationCode, tran.CardBrand, tran.CardBin, tran.CardLast).Exec()
+	query := fmt.Sprintf("UPDATE orders SET transactions = transactions + [{id: %v, external_id: '%v', amount: %v, type: '%v', authorization_code: '%v', card_brand: '%v', card_bin: '%v', card_last: '%v'}] WHERE id = %v",
+		tran.Id, tran.ExternalId, tran.Amount, tran.Type, tran.AuthorizationCode, tran.CardBrand, tran.CardBin, tran.CardLast, order_id)
+
+	err := session.Query(query).Exec()
 
 	if (err != nil) {
 		log.Fatal(err)
