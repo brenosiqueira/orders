@@ -6,6 +6,11 @@ import (
 	"log"
 )
 
+type Config struct {
+	Scyllaclusters []string
+	Serverport int
+}
+
 type Order struct {
 	Id        string      `json:"id"`
 	Number    string      `json:"number"`
@@ -45,6 +50,18 @@ type OrderDetails struct {
 	CardLast string 							`json:"cardLast"`
 }
 
+type Transaction struct {
+	Id       string `json:"id"`
+	ExternalId    string    `json:"external_id"`
+	Amount int    `json:"amount"`
+	Type    string `json:"type"`
+	AuthorizationCode string `json:"authorization_code"`
+	CardBrand string `json:"card_brand"`
+	CardBin string `json:"card_bin"`
+	CardLast string `json:"card_last"`
+	OrderId string `json:"order_id"`
+}
+
 func (order *Order) Save() error {
 	//log.Print("Saving to disk")
 	order.Id = uuid.NewV4().String()
@@ -61,7 +78,7 @@ func (order *Order) Save() error {
 	return err
 }
 
-func (order *Order) Find(id string) error {
+func (order *Order) FindId(id string) error {
 	return session.Query("SELECT id FROM \"order\" WHERE id = ? ", id).Scan(&order.Id)
 }
 
@@ -75,6 +92,7 @@ func (item *OrderItem) Save(order_id string) error {
 
 	return err
 }
+
 
 func (orderDetails *OrderDetails) GetOrder(id string) error {
 
@@ -96,4 +114,17 @@ func (orderDetails *OrderDetails) GetOrder(id string) error {
         return &orderDetails, nil
     }
 
+}
+
+func (tran *Transaction) Save(order_id string) error {
+	tran.Id = uuid.NewV4().String()
+
+	err := session.Query("INSERT INTO \"transaction\" (id,order_id,external_id,amount,type,authorization_code,card_brand,card_bin,card_last) VALUES (?,?,?,?,?,?,?,?,?)",
+		tran.Id, order_id, tran.ExternalId, tran.Amount, tran.Type, tran.AuthorizationCode, tran.CardBrand, tran.CardBin, tran.CardLast).Exec()
+
+	if (err != nil) {
+		log.Fatal(err)
+	}
+
+	return err
 }

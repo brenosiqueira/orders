@@ -4,14 +4,32 @@ import (
 	"github.com/gocql/gocql"
 	"github.com/kataras/iris"
 	_ "github.com/dimiro1/banner/autoload"
+	"gopkg.in/yaml.v2"
 	"log"
+	"io/ioutil"
+	"fmt"
 )
 
 var session *gocql.Session
-
+var config Config
 
 func main() {
-	cluster := gocql.NewCluster("localhost") //172.31.1.39
+	config = Config{}
+	configFile, err := ioutil.ReadFile("application.yml")
+	if err != nil {
+		panic(err)
+	}
+
+	log.Print(config)
+
+	err = yaml.Unmarshal(configFile, &config)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Print(config)
+
+	cluster := gocql.NewCluster(config.Scyllaclusters...)
 	cluster.Keyspace = "orders"
 	cluster.Consistency = gocql.One
 
@@ -27,12 +45,11 @@ func setupWebServer(session *gocql.Session) {
 		scylla(ctx, session)
 	})
 
-	iris.API("/post", OrderAPI{})
-
 	iris.API("/orders", OrderAPI{})
 	iris.API("/orders/:id/items", OrderItemAPI{})
+	iris.API("/orders/:id/transactions", TransactionAPI{})
 
-	iris.Listen(":8080")
+	iris.Listen(fmt.Sprintf(":%v",config.Serverport))
 }
 
 func scylla(ctx *iris.Context, session *gocql.Session) {
