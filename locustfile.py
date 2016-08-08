@@ -109,5 +109,4 @@ class RedWeddingBehaviour(TaskSet):
 
 class LocustInit(HttpLocust):
   task_set = RedWeddingBehaviour
-  host = "http://52.87.172.243:80"
-  #host = "http://sdlneuredelb-1416286239.us-east-1.elb.amazonaws.com:80" 
+  host = "http://localhost:80"
