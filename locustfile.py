@@ -42,7 +42,7 @@ def getRandomTime():
 def createOrderItem(l, orderID, quantity, currentRun):
   start = getTimeInMillis()
   orderItemUrl = "/orders/%s/items" % (orderID)
-  createOrderItemResponse = l.client.post(orderItemUrl, createOrderItemBody(quantity))
+  createOrderItemResponse = l.client.post(orderItemUrl, createOrderItemBody(quantity), name='/createOrder')
   end = getTimeInMillis() - start
   print "createOrderItem, responseCode[%d], time[%dms], run[%d]" % (createOrderItemResponse.status_code, end, currentRun)  
   time.sleep(getRandomTime())
@@ -50,14 +50,14 @@ def createOrderItem(l, orderID, quantity, currentRun):
 def payOrder(l, orderID, amount, currentRun):
   start = getTimeInMillis()
   orderItemUrl = "/orders/%s/transactions" % (orderID)
-  payOrderResponse = l.client.post(orderItemUrl, payOrderBody(amount))
+  payOrderResponse = l.client.post(orderItemUrl, payOrderBody(amount), name='/payOrder')
   end = getTimeInMillis() - start
   print "payOrder, responseCode[%d], time[%dms], run[%d]" % (payOrderResponse.status_code, end, currentRun)
 
 def getOrder(l, orderID, currentRun):
   start = getTimeInMillis()
   getOrderUrl = "/orders/%s" % (orderID)
-  getOrderResponse = l.client.get(getOrderUrl)
+  getOrderResponse = l.client.get(getOrderUrl, name='/getOrder')
   end = getTimeInMillis() - start
   print "getOrder, responseCode[%d], time[%dms], run[%d]" % (getOrderResponse.status_code, end, currentRun)    
 
@@ -83,7 +83,6 @@ class RedWeddingBehaviour(TaskSet):
   @task(1)
   def addOrderItems(self):
     if (self.orderID != None):
-      #5 consultas simultaneas--
       #Adiciona 5 itens de um produto a ordem, um OrderItem com o valor 5 na quantidade
       createOrderItem(self, self.orderID, 5, self.currentRun)
       #adiciona novamente um OrderItem com 5 unidades do produto
@@ -100,6 +99,7 @@ class RedWeddingBehaviour(TaskSet):
     else:
       print "no orderID for createOrder"
 
+  #5 consultas simultaneas--
   @task(5)
   def getOrder(self):
     if (self.orderID != None):
